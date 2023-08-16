@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,20 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::middleware('guest')->group(function () {
+    Route::controller(AuthController::class)->group(function () {
+        Route::get('/login', 'showLogin')->name('login');
+        Route::post('/login', 'login')->name('login');
+        Route::get('/register', 'showRegister')->name('register');
+        Route::post('/register', 'register')->name('register');
+    });
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::controller(HomeController::class)->group(function () {
+        Route::get('/home', 'index')->name('home');
+    });
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
