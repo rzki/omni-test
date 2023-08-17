@@ -23,7 +23,7 @@ public function login(Request $request)
             $user = User::where('email', $user->email)->update([
                 'api_token' => Str::random(60)
             ]);
-        return response()->json(['message' => 'Login Successful', 'user' => $user], 200);
+        return response()->json($user);
     }
 
     return response()->json(['message' => 'Something went wrong'], 401);

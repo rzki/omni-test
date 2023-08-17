@@ -168,6 +168,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Spatie\HttpLogger\HttpLoggerServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -185,4 +186,7 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'middleware' => [
+        'Illuminate\Http\Middleware\LogRequest'
+    ]
 ];
