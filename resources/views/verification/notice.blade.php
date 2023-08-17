@@ -1,4 +1,4 @@
-@extends('layouts.auth', ['title' => 'Login'])
+@extends('layouts.auth', ['title' => 'Please Verify Your Email First!'])
 
 @section('content')
     <div class="container d-flex flex-column">
@@ -7,15 +7,15 @@
                 <div class="d-table-cell align-middle">
 
                     <div class="text-center mt-4">
-                        <h1 class="h2">Welcome to Omni Hotelier!</h1>
+                        <h1 class="h2">Welcome!</h1>
                         <p class="lead">
-                            Sign in to your account to continue
+                            Please verify your email
                         </p>
                     </div>
 
                     <div class="card">
                         <div class="card-body">
-                            <div class="m-sm-3">
+                            {{-- <div class="m-sm-3">
                                 <form action={{ route('login') }} method="POST">
                                     @csrf
                                     <div class="mb-3">
@@ -40,7 +40,20 @@
                                         <button type="submit" class="btn btn-lg btn-primary">Sign in</button>
                                     </div>
                                 </form>
+                            </div> --}}
+                            @if (session('resent'))
+                            <div class="alert alert-success" role="alert">
+                                A fresh verification link has been sent to your email address.
                             </div>
+                            @endif
+
+                            Before proceeding, please check your email for a verification link. If you did not receive the email,
+                            <form action="{{ route('verification.resend') }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="d-inline btn btn-link p-0">
+                                    click here to request another
+                                </button>.
+                            </form>
                         </div>
                     </div>
                     <div class="text-center mb-3">

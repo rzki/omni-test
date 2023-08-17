@@ -22,15 +22,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware(HttpLogger::class)->group(function () {
-    Route::name('api.')->group(function () {
-        Route::controller(AuthController::class)->group(function () {
-            Route::post('/login', 'login')->name('login');
-            Route::post('/register', 'register')->name('register');
-        });
+    Route::controller(AuthController::class)->group(function () {
+        Route::post('/login', 'login')->name('api.login');
+        Route::post('/register', 'register')->name('api.register');
     });
 
-    Route::middleware('auth:api')->group( function () {
-        Route::resource('users', UserController::class);
-        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::middleware('auth:api')->group(function () {
+        Route::resource('users', UserController::class, ['as' => 'api']);
+        Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
     });
+
+    Route::post('/add-multiple-user', [AuthController::class, 'addMultipleUser'])->name('add-multiple-user');
 });
