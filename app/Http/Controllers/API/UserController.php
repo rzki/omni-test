@@ -16,7 +16,7 @@ class UserController extends Controller
     {
         $user = User::all();
 
-        return response()->json(['message' => 'Users retrieved successfully!', 'data' => $user], 200);
+        return response()->json($user, 200);
     }
 
     /**
@@ -35,7 +35,7 @@ class UserController extends Controller
             'password' => Hash::make('default'),
         ]);
 
-        return response()->json(['message' => 'Add new User successful!', 'data' => $user], 201);
+        return response()->json($user, 201);
     }
 
     /**
@@ -45,7 +45,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        return response()->json(['message' => 'User retrieved successfully!', 'data' => $user], 200);
+        return response()->json($user, 200);
     }
 
     /**
@@ -63,7 +63,7 @@ class UserController extends Controller
             'email' => $request->email,
         ]);
 
-        return response()->json(['message' => 'Update User successful!', 'data' => $user], 200);
+        return response()->json($user, 200);
     }
 
     /**
@@ -74,6 +74,6 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return response()->json(['message' => 'Delete User successful!', 'data' => $user], 200);
+        return response()->json($user, 200);
     }
 }

@@ -12,22 +12,20 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
 
-public function login(Request $request)
-{
-
-    $credentials = $request->only('email', 'password');
-
-    if (Auth::guard('web')->attempt($credentials)) {
-        $user = Auth::guard('web')->user();
+        if (Auth::guard('web')->attempt($credentials)) {
+            $user = Auth::guard('web')->user();
             $user = User::where('email', $user->email)->update([
-                'api_token' => Str::random(60)
+                'api_token' => Str::random(60),
             ]);
-        return response()->json($user);
-    }
+            return response()->json($user);
+        }
 
-    return response()->json(['message' => 'Something went wrong'], 401);
-}
+        return response()->json(['message' => 'Something went wrong'], 401);
+    }
 
     public function register(Request $request)
     {
@@ -55,7 +53,8 @@ public function login(Request $request)
         );
     }
 
-    public function logout(){
+    public function logout()
+    {
         Auth::guard('web')->logout();
         return response()->json(['message' => 'Logout Successful'], 200);
     }
