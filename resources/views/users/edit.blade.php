@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Add New User'])
+@extends('layouts.app', ['title' => 'Edit Existing User'])
 
 @section('content')
     <div class="container-fluid p-0">
@@ -16,18 +16,20 @@
                     </div>
                     <div class="card-body px-5">
                         <div class="text-center">
-                            <h3>Add New User Form</h3>
+                            <h3>Edit Existing User Form</h3>
                         </div>
                         <div class="form mt-3">
-                            <form action={{ route('users.store') }} method="POST">
+                            <form action={{ route('users.update', $user->id) }} method="POST">
                                 @csrf
+                                @method('PUT')
+                                
                                 <div class="mb-3">
                                     <label for="exampleInputName1" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp">
+                                    <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $user->name) }}">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">Email address</label>
-                                    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp">
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $user->email) }}">
                                 </div>
                                 <div class="d-grid pb-3">
                                     <button type="submit" class="btn btn-success">Submit</button>
