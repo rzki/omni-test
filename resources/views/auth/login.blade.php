@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     <div class="text-center mb-3">
-                        Don't have an account? <a href="{{ route('register') }}">Sign up</a>
+                        Don't have an account? <a href="{{ route('showRegister') }}">Sign up</a>
                     </div>
                 </div>
             </div>
