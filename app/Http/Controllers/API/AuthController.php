@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use GuzzleHttp\Promise\Utils;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -62,48 +66,46 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logout Successful'], 200);
     }
 
-    public function addMultipleUser(){
-        $usersData = []; // Array to store user data
+    public function addMultipleUser(Request $request)
+    {
+        $usersData = [];
 
-        // Generate 100 user data
+        // Generate 100 random users
         for ($i = 0; $i < 100; $i++) {
             $usersData[] = [
-                'name' => 'User ' . Str::random(5),
+                'name' => 'User ' . $i,
                 'email' => 'user' . $i . '@example.com',
-                'password' => Hash::make('tested11'),
+                'password' => Hash::make('12121212'),
             ];
         }
-
-        // Chunk the user data into smaller batches (optional)
-        $batches = array_chunk($usersData, 10);
 
         // Start the timer
         $startTime = microtime(true);
 
-        // Process the requests asynchronously
-        $responses = [];
-        foreach ($batches as $batch) {
-            $responses[] = Http::asJson()->post('/api/add-multiple-user', $batch);
-        }
+        try {
+            DB::beginTransaction();
 
-        // Wait for all responses to complete
-        $responses = collect($responses)->pluck('result')->map(fn ($response) => $response->wait())->all();
+            // Chunk the user data into smaller batches (optional)
+            $batches = array_chunk($usersData, 100);
 
-        // Calculate the total execution time
-        $executionTime = microtime(true) - $startTime;
-
-        // Log the execution time
-        Log::info("Execution time: {$executionTime} seconds");
-
-        // Process the responses
-        foreach ($responses as $response) {
-            if ($response->successful()) {
-                // Handle successful response
-                return $response->json();
-            } else {
-                // Handle failed response
-                Log::error('Failed to create user: ' . $response->body());
+            foreach ($batches as $batch) {
+                User::insert($batch);
             }
+
+            DB::commit();
+
+            // Calculate the total execution time
+            $executionTime = microtime(true) - $startTime;
+
+            // Log the execution time
+            Log::info("Execution time: {$executionTime} seconds");
+
+            return response()->json(['message' => 'Users added successfully', 'execution_time' => $executionTime]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to add multiple users: ' . $e->getMessage());
+
+            return response()->json(['message' => 'Failed to add multiple users'], 500);
         }
     }
 }
